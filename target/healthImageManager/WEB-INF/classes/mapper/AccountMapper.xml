@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.main.dao.AccountMapper">
+    <resultMap id="BaseResultMap" type="com.platform.main.bean.po.BaseAccount">
+        <id column="ACCOUNT_ID" jdbcType="OTHER" property="accountId"/>
+        <result column="USER_ID" jdbcType="OTHER" property="userId"/>
+        <result column="LOGIN_NAME" jdbcType="OTHER" property="loginName"/>
+        <result column="LOGIN_PWD" jdbcType="OTHER" property="loginPwd"/>
+        <result column="PHONE" jdbcType="OTHER" property="phone"/>
+        <result column="EMAIL" jdbcType="OTHER" property="email"/>
+        <result column="REGISTER_TIME" jdbcType="OTHER" property="registerTime"/>
+        <result column="LAST_LOGIN_TIME" jdbcType="OTHER" property="lastLoginTime"/>
+        <result column="LAST_PWD_MODIFY_TIME" jdbcType="OTHER" property="lastPwdModifyTime"/>
+        <result column="PASSWORD_RETRY" jdbcType="OTHER" property="passwordRetry"/>
+        <result column="STATE" jdbcType="OTHER" property="state"/>
+    </resultMap>
+
+    <resultMap extends="BaseResultMap" id="AccountInfomationResultMap" type="com.platform.main.bean.bo.User">
+        <association property="baseUser" javaType="com.platform.main.bean.po.BaseUser">
+            <id column="USER_ID" jdbcType="OTHER" property="userId"/>
+            <result column="USER_NAME" jdbcType="OTHER" property="userName"/>
+            <result column="BIRTHDAY" jdbcType="OTHER" property="birthday"/>
+        </association>
+    </resultMap>
+
+    <sql id="Single_Base_Column_List">
+        ACCOUNT_ID, USER_ID, LOGIN_NAME, LOGIN_PWD, PHONE, EMAIL, REGISTER_TIME, LAST_LOGIN_TIME, LAST_PWD_MODIFY_TIME, PASSWORD_RETRY, STATE
+    </sql>
+
+    <sql id="Base_Column_List">
+        a.ACCOUNT_ID, a.USER_ID, a.LOGIN_NAME, a.LOGIN_PWD, a.PHONE, a.EMAIL, a.REGISTER_TIME, a.LAST_LOGIN_TIME, a.LAST_PWD_MODIFY_TIME, a.PASSWORD_RETRY, a.STATE,
+        u.USER_ID, u.USER_NAME, u.BIRTHDAY
+    </sql>
+
+    <sql id="Base_Column_List_1">
+        a.ACCOUNT_ID, a.USER_ID, a.LOGIN_NAME, a.LOGIN_PWD, a.PHONE, a.EMAIL, a.REGISTER_TIME, a.LAST_LOGIN_TIME, a.LAST_PWD_MODIFY_TIME, a.PASSWORD_RETRY, a.STATE
+    </sql>
+
+    <select id="loadUserByUsername" parameterType="java.lang.String" resultMap="AccountInfomationResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from BASE_ACCOUNT a
+        left join BASE_USER u on a.USER_ID = u.USER_ID
+        where a.LOGIN_NAME = #{userName}
+        AND a.STATE = 1
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Single_Base_Column_List"/>
+        from BASE_ACCOUNT
+        where ACCOUNT_ID = #{accountId}
+        AND STATE = 1
+    </select>
+
+    <insert id="insert" parameterType="com.platform.main.bean.po.BaseAccount">
+        INSERT INTO BASE_ACCOUNT
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">
+                ACCOUNT_ID,
+            </if>
+            <if test="userId != null">
+                USER_ID,
+            </if>
+            <if test="loginName != null">
+                LOGIN_NAME,
+            </if>
+            <if test="loginPwd != null">
+                LOGIN_PWD,
+            </if>
+            <if test="phone != null">
+                PHONE,
+            </if>
+            <if test="email != null">
+                EMAIL,
+            </if>
+            <if test="registerTime != null">
+                REGISTER_TIME,
+            </if>
+            <if test="lastLoginTime != null">
+                LAST_LOGIN_TIME,
+            </if>
+            <if test="lastPwdModifyTime != null">
+                LAST_PWD_MODIFY_TIME,
+            </if>
+            <if test="passwordRetry != null">
+                PASSWORD_RETRY,
+            </if>
+            <if test="state != null">
+                STATE,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="accountId != null ">
+                #{accountId},
+            </if>
+            <if test="userId != null ">
+                #{userId},
+            </if>
+            <if test="loginName != null ">
+                #{loginName},
+            </if>
+            <if test="loginPwd != null ">
+                #{loginPwd},
+            </if>
+            <if test="phone != null ">
+                #{phone},
+            </if>
+            <if test="email != null ">
+                #{email},
+            </if>
+            <if test="registerTime != null ">
+                #{registerTime},
+            </if>
+            <if test="lastLoginTime != null ">
+                #{lastLoginTime},
+            </if>
+            <if test="lastPwdModifyTime != null ">
+                #{lastPwdModifyTime},
+            </if>
+            <if test="passwordRetry != null ">
+                #{passwordRetry},
+            </if>
+            <if test="state != null ">
+                #{state},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.platform.main.bean.po.BaseAccount">
+        UPDATE BASE_ACCOUNT
+        <set>
+            <if test="userId != null">
+                USER_ID = #{userId},
+            </if>
+            <if test="loginName != null">
+                LOGIN_NAME = #{loginName},
+            </if>
+            <if test="loginPwd != null">
+                LOGIN_PWD = #{loginPwd},
+            </if>
+            <if test="phone != null">
+                PHONE = #{phone},
+            </if>
+            <if test="email != null">
+                EMAIL = #{email},
+            </if>
+            <if test="registerTime != null">
+                REGISTER_TIME = #{registerTime},
+            </if>
+            <if test="lastLoginTime != null">
+                LAST_LOGIN_TIME = #{lastLoginTime},
+            </if>
+            <if test="lastPwdModifyTime != null">
+                LAST_PWD_MODIFY_TIME = #{lastPwdModifyTime},
+            </if>
+            <if test="passwordRetry != null">
+                PASSWORD_RETRY = #{passwordRetry},
+            </if>
+            <if test="state != null">
+                STATE = #{state},
+            </if>
+        </set>
+        WHERE ACCOUNT_ID = #{accountId}
+    </update>
+
+    <select id="selectByBean" parameterType="com.platform.main.bean.po.BaseAccount" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Single_Base_Column_List"/>
+        FROM BASE_ACCOUNT
+        WHERE 1=1
+        <if test="accountId != null and accountId != ''">
+            AND ACCOUNT_ID = #{accountId}
+        </if>
+        <if test="userId != null and userId != ''">
+            AND USER_ID = #{userId}
+        </if>
+        <if test="loginName != null and loginName != ''">
+            AND LOGIN_NAME = #{loginName}
+        </if>
+        <if test="loginPwd != null and loginPwd != ''">
+            AND LOGIN_PWD = #{loginPwd}
+        </if>
+        <if test="phone != null and phone != ''">
+            AND PHONE = #{phone}
+        </if>
+        <if test="email != null and email != ''">
+            AND EMAIL = #{email}
+        </if>
+        <if test="registerTime != null and registerTime != ''">
+            AND REGISTER_TIME = #{registerTime}
+        </if>
+        <if test="lastLoginTime != null and lastLoginTime != ''">
+            AND LAST_LOGIN_TIME = #{lastLoginTime}
+        </if>
+        <if test="lastPwdModifyTime != null and lastPwdModifyTime != ''">
+            AND LAST_PWD_MODIFY_TIME = #{lastPwdModifyTime}
+        </if>
+        <if test="passwordRetry != null and passwordRetry != ''">
+            AND PASSWORD_RETRY = #{passwordRetry}
+        </if>
+        <if test="state != null">
+            AND STATE = #{state}
+        </if>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM BASE_ACCOUNT
+        WHERE ACCOUNT_ID = #{accountId}
+    </delete>
+
+    <delete id="batchDeleteByPrimaryKey">
+        DELETE FROM BASE_ACCOUNT
+        WHERE ACCOUNT_ID IN
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="selectByRoleId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List_1"/>
+        from BASE_ACCOUNT a
+        left join BASE_ACCOUNT2ROLE b
+        on a.ACCOUNT_ID = b.ACCOUNT_ID
+        where ROLE_ID = #{roleId}
+    </select>
+</mapper>

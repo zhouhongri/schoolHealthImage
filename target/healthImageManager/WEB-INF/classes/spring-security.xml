@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!-- 配置不拦截的资源 -->
+    <!--<security:http pattern="/view/login/login.jsp" security="none"/>
+    <security:http pattern="/css/**" security="none"/>
+    <security:http pattern="/images/**" security="none"/>
+    <security:http pattern="/js/**" security="none"/>-->
+    <!--<security:http pattern="/resource/layui/**" security="none"/>-->
+
+    <!--
+    	配置具体的规则
+    	auto-config="true"	不用自己编写登录的页面，框架提供默认登录页面
+    	use-expressions="false"	是否使用SPEL表达式
+    -->
+    <security:http auto-config="true" use-expressions="false">
+        <!-- 配置具体的拦截的规则 pattern="请求路径的规则" -->
+        <security:intercept-url pattern="/**"/>
+
+        <!-- 定义跳转的具体的页面 -->
+        <security:form-login
+                login-page="/view/login/login.jsp"
+                default-target-url="/view/index/index.jsp"
+                authentication-success-handler-ref="authenticationSuccessHandlerImpl"
+                authentication-failure-handler-ref="authenticationFailureHandlerImpl"
+        />
+
+        <!-- 关闭跨域请求 -->
+        <security:csrf disabled="true"/>
+
+        <!-- 退出 -->
+        <security:logout invalidate-session="true" logout-url="/logout.do" logout-success-url="/view/login/login.jsp"/>
+
+        <!--  X-Frame-Options 有三个值:
+                DENY
+                表示该页面不允许在 frame 中展示，即便是在相同域名的页面中嵌套也不允许。
+                SAMEORIGIN
+                表示该页面可以在相同域名页面的 frame 中展示。
+                ALLOW-FROM uri
+                表示该页面可以在指定来源的 frame 中展示。
+        -->
+        <security:headers>
+            <security:frame-options policy="SAMEORIGIN"></security:frame-options>
+        </security:headers>
+    </security:http>
+
+    <!-- 切换成数据库中的用户名和密码 -->
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="userDetailServiceImpl">
+            <!-- 配置加密的方式 -->
+            <security:password-encoder ref="passwordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <!-- 配置加密类 -->
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+
+</beans>

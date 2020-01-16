@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.main.dao.BaseRole2apiMapper">
+    <resultMap id="BaseRole2apiMap" type="com.platform.main.bean.po.BaseRole2api">
+        <result column="ROLE_ID" jdbcType="OTHER" property="roleId"/>
+        <result column="API_ID" jdbcType="OTHER" property="apiId"/>
+    </resultMap>
+
+    <sql id="Single_Base_Column_List">
+ROLE_ID,API_ID
+    </sql>
+
+    <select id="selectByBean" parameterType="com.platform.main.bean.po.BaseRole2api" resultMap="BaseRole2apiMap">
+        SELECT
+        <include refid="Single_Base_Column_List"/>
+        FROM BASE_ROLE2API
+        WHERE 1=1
+        <if test="roleId != null and roleId != ''">
+            AND ROLE_ID = #{roleId}
+        </if>
+        <if test="apiId != null and apiId != ''">
+            AND API_ID = #{apiId}
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="com.platform.main.bean.po.BaseRole2api">
+        INSERT INTO BASE_ROLE2API
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">
+                ROLE_ID,
+            </if>
+            <if test="apiId != null">
+                API_ID,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleId != null ">
+                #{roleId},
+            </if>
+            <if test="apiId != null ">
+                #{apiId},
+            </if>
+        </trim>
+    </insert>
+</mapper>

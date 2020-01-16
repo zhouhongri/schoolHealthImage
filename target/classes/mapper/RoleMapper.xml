@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.main.dao.RoleMapper">
+    <resultMap id="BaseResultMap" type="com.platform.main.bean.po.BaseRole">
+        <id column="ROLE_ID" jdbcType="OTHER" property="roleId"/>
+        <result column="ROLE_SIGN" jdbcType="OTHER" property="roleSign"/>
+        <result column="ROLE_NAME" jdbcType="OTHER" property="roleName"/>
+        <result column="ROLE_DESCRIPTION" jdbcType="OTHER" property="roleDescription"/>
+    </resultMap>
+    <sql id="Single_Base_Column_List">
+    ROLE_ID, ROLE_SIGN, ROLE_NAME, ROLE_DESCRIPTION
+    </sql>
+    <sql id="Base_Column_List">
+    a.ROLE_ID, a.ROLE_SIGN, a.ROLE_NAME, a.ROLE_DESCRIPTION
+    </sql>
+
+    <select id="selectByAccountId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from BASE_ROLE a
+        left join BASE_ACCOUNT2ROLE b
+        on a.ROLE_ID = b.ROLE_ID
+        where ACCOUNT_ID = #{accountId}
+    </select>
+
+    <select id="selectByBean" parameterType="com.platform.main.bean.po.BaseRole" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Single_Base_Column_List"/>
+        FROM BASE_ROLE
+        WHERE 1=1
+        <if test="roleId != null and roleId != ''">
+            AND ROLE_ID = #{roleId}
+        </if>
+        <if test="roleSign != null and roleSign != ''">
+            AND ROLE_SIGN = #{roleSign}
+        </if>
+        <if test="roleName != null and roleName != ''">
+            AND ROLE_NAME = #{roleName}
+        </if>
+        <if test="roleDescription != null and roleDescription != ''">
+            AND ROLE_DESCRIPTION = #{roleDescription}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Single_Base_Column_List"/>
+        FROM BASE_ROLE
+        WHERE ROLE_ID = #{roleId}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM BASE_ROLE
+        WHERE ROLE_ID = #{roleId}
+    </delete>
+
+    <delete id="batchDeleteByPrimaryKey">
+        DELETE FROM BASE_ROLE
+        WHERE ROLE_ID IN
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="com.platform.main.bean.po.BaseRole">
+        <selectKey keyProperty="roleId" order="BEFORE" resultType="java.lang.Long">
+            SELECT BASE_ROLE$SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO BASE_ROLE
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">
+                ROLE_ID,
+            </if>
+            <if test="roleSign != null">
+                ROLE_SIGN,
+            </if>
+            <if test="roleName != null">
+                ROLE_NAME,
+            </if>
+            <if test="roleDescription != null">
+                ROLE_DESCRIPTION,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleId != null ">
+                #{roleId},
+            </if>
+            <if test="roleSign != null ">
+                #{roleSign},
+            </if>
+            <if test="roleName != null ">
+                #{roleName},
+            </if>
+            <if test="roleDescription != null ">
+                #{roleDescription},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.platform.main.bean.po.BaseRole">
+        UPDATE BASE_ROLE
+        <set>
+            <if test="roleSign != null">
+                ROLE_SIGN = #{roleSign},
+            </if>
+            <if test="roleName != null">
+                ROLE_NAME = #{roleName},
+            </if>
+            <if test="roleDescription != null">
+                ROLE_DESCRIPTION = #{roleDescription},
+            </if>
+        </set>
+        WHERE ROLE_ID = #{roleId}
+    </update>
+</mapper>

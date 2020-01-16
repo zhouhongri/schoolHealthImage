@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.main.dao.MenuMapper">
+    <resultMap id="BaseResultMap" type="com.platform.main.bean.po.BaseMenu">
+        <id column="MENU_ID" jdbcType="OTHER" property="menuId"/>
+        <result column="MENU_URL" jdbcType="OTHER" property="menuUrl"/>
+        <result column="MENU_PATH" jdbcType="OTHER" property="menuPath"/>
+        <result column="MENU_COMPONENT" jdbcType="OTHER" property="menuComponent"/>
+        <result column="MENU_NAME" jdbcType="OTHER" property="menuName"/>
+        <result column="MENU_ICON_CLASS" jdbcType="OTHER" property="menuIconClass"/>
+        <result column="KEEP_ALIVE" jdbcType="OTHER" property="keepAlive"/>
+        <result column="REQUIRE_AUTH" jdbcType="OTHER" property="requireAuth"/>
+        <result column="PARENT_MENU_ID" jdbcType="OTHER" property="parentMenuId"/>
+        <result column="ENABLED" jdbcType="OTHER" property="enabled"/>
+    </resultMap>
+    <sql id="Single_Base_Column_List">
+        MENU_ID, MENU_URL, MENU_PATH, MENU_COMPONENT, MENU_NAME, MENU_ICON_CLASS, KEEP_ALIVE, REQUIRE_AUTH, PARENT_MENU_ID, ENABLED
+    </sql>
+    <select id="selectMenuListByRoleSign" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select bm.MENU_ID, bm.MENU_URL, bm.MENU_PATH, bm.MENU_COMPONENT, bm.MENU_NAME,
+        bm.MENU_ICON_CLASS, bm.KEEP_ALIVE, bm.REQUIRE_AUTH, bm.PARENT_MENU_ID, bm.ENABLED
+        from BASE_MENU bm
+        where MENU_ID in (select a.MENU_ID
+            from BASE_ROLE2MENU a
+            where a.ROLE_ID = (select r.ROLE_ID from base_role r where r.ROLE_SIGN = #{roleSign}))
+            AND bm.ENABLED = 1
+            ORDER BY MENU_ID
+    </select>
+
+    <select id="selectMenuChildListByRoleSign" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select bm.MENU_ID, bm.MENU_URL, bm.MENU_PATH, bm.MENU_COMPONENT, bm.MENU_NAME,
+        bm.MENU_ICON_CLASS, bm.KEEP_ALIVE, bm.REQUIRE_AUTH, bm.PARENT_MENU_ID, bm.ENABLED
+        from BASE_MENU bm
+        where MENU_ID in (select a.MENU_ID
+            from BASE_ROLE2MENU a
+            where a.ROLE_ID = (select r.ROLE_ID from base_role r where r.ROLE_SIGN = #{roleSign}))
+            AND bm.ENABLED = 1 AND bm.PARENT_MENU_ID &lt;&gt; 0
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Single_Base_Column_List"/>
+        from BASE_MENU
+        where MENU_ID = #{menuId}
+    </select>
+
+    <select id="selectByBean" parameterType="com.platform.main.bean.po.BaseMenu"
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="Single_Base_Column_List"/>
+        FROM BASE_MENU
+        WHERE 1=1
+        <if test="menuId != null and menuId != ''">
+            AND MENU_ID = #{menuId}
+        </if>
+        <if test="menuUrl != null and menuUrl != ''">
+            AND MENU_URL = #{menuUrl}
+        </if>
+        <if test="menuPath != null and menuPath != ''">
+            AND MENU_PATH = #{menuPath}
+        </if>
+        <if test="menuComponent != null and menuComponent != ''">
+            AND MENU_COMPONENT = #{menuComponent}
+        </if>
+        <if test="menuName != null and menuName != ''">
+            AND MENU_NAME = #{menuName}
+        </if>
+        <if test="menuIconClass != null and menuIconClass != ''">
+            AND MENU_ICON_CLASS = #{menuIconClass}
+        </if>
+        <if test="keepAlive != null and keepAlive != ''">
+            AND KEEP_ALIVE = #{keepAlive}
+        </if>
+        <if test="requireAuth != null and requireAuth != ''">
+            AND REQUIRE_AUTH = #{requireAuth}
+        </if>
+        <if test="parentMenuId != null and parentMenuId != ''">
+            AND PARENT_MENU_ID = #{parentMenuId}
+        </if>
+        <if test="enabled != null and enabled != ''">
+            AND ENABLED = #{enabled}
+        </if>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM BASE_MENU
+        WHERE MENU_ID = #{menuId}
+    </delete>
+
+    <delete id="batchDeleteByPrimaryKey">
+        DELETE FROM BASE_MENU
+        WHERE MENU_ID IN
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="com.platform.main.bean.po.BaseMenu">
+        <selectKey keyProperty="menuId" order="BEFORE" resultType="java.lang.Long">
+            SELECT BASE_MENU$SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO BASE_MENU
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="menuId != null">
+                MENU_ID,
+            </if>
+            <if test="menuUrl != null">
+                MENU_URL,
+            </if>
+            <if test="menuPath != null">
+                MENU_PATH,
+            </if>
+            <if test="menuComponent != null">
+                MENU_COMPONENT,
+            </if>
+            <if test="menuName != null">
+                MENU_NAME,
+            </if>
+            <if test="menuIconClass != null">
+                MENU_ICON_CLASS,
+            </if>
+            <if test="keepAlive != null">
+                KEEP_ALIVE,
+            </if>
+            <if test="requireAuth != null">
+                REQUIRE_AUTH,
+            </if>
+            <if test="parentMenuId != null">
+                PARENT_MENU_ID,
+            </if>
+            <if test="enabled != null">
+                ENABLED,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="menuId != null ">
+                #{menuId},
+            </if>
+            <if test="menuUrl != null ">
+                #{menuUrl},
+            </if>
+            <if test="menuPath != null ">
+                #{menuPath},
+            </if>
+            <if test="menuComponent != null ">
+                #{menuComponent},
+            </if>
+            <if test="menuName != null ">
+                #{menuName},
+            </if>
+            <if test="menuIconClass != null ">
+                #{menuIconClass},
+            </if>
+            <if test="keepAlive != null ">
+                #{keepAlive},
+            </if>
+            <if test="requireAuth != null ">
+                #{requireAuth},
+            </if>
+            <if test="parentMenuId != null ">
+                #{parentMenuId},
+            </if>
+            <if test="enabled != null ">
+                #{enabled},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.platform.main.bean.po.BaseMenu">
+        UPDATE BASE_MENU
+        <set>
+            <if test="menuUrl != null">
+                MENU_URL = #{menuUrl},
+            </if>
+            <if test="menuPath != null">
+                MENU_PATH = #{menuPath},
+            </if>
+            <if test="menuComponent != null">
+                MENU_COMPONENT = #{menuComponent},
+            </if>
+            <if test="menuName != null">
+                MENU_NAME = #{menuName},
+            </if>
+            <if test="menuIconClass != null">
+                MENU_ICON_CLASS = #{menuIconClass},
+            </if>
+            <if test="keepAlive != null">
+                KEEP_ALIVE = #{keepAlive},
+            </if>
+            <if test="requireAuth != null">
+                REQUIRE_AUTH = #{requireAuth},
+            </if>
+            <if test="parentMenuId != null">
+                PARENT_MENU_ID = #{parentMenuId},
+            </if>
+            <if test="enabled != null">
+                ENABLED = #{enabled},
+            </if>
+        </set>
+        WHERE MENU_ID = #{menuId}
+    </update>
+
+    <select id="selectParentIdByPrimaryKeys" resultType="java.lang.Long" parameterType="java.util.List">
+        SELECT
+        PARENT_MENU_ID
+        FROM BASE_MENU
+        WHERE MENU_ID IN
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        GROUP BY PARENT_MENU_ID
+    </select>
+</mapper>

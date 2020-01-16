@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.main.dao.BaseAccount2roleMapper">
+    <resultMap id="BaseAccount2roleMap" type="com.platform.main.bean.po.BaseAccount2role">
+        <result column="ACCOUNT_ID" jdbcType="OTHER" property="accountId"/>
+        <result column="ROLE_ID" jdbcType="OTHER" property="roleId"/>
+    </resultMap>
+
+    <sql id="Single_Base_Column_List">
+ACCOUNT_ID,ROLE_ID
+    </sql>
+
+    <select id="selectByBean" parameterType="com.platform.main.bean.po.BaseAccount2role"
+            resultMap="BaseAccount2roleMap">
+        SELECT
+        <include refid="Single_Base_Column_List"/>
+        FROM BASE_ACCOUNT2ROLE
+        WHERE 1=1
+        <if test="accountId != null and accountId != ''">
+            AND ACCOUNT_ID = #{accountId}
+        </if>
+        <if test="roleId != null and roleId != ''">
+            AND ROLE_ID = #{roleId}
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="com.platform.main.bean.po.BaseAccount2role">
+        INSERT INTO BASE_ACCOUNT2ROLE
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">
+                ACCOUNT_ID,
+            </if>
+            <if test="roleId != null">
+                ROLE_ID,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="accountId != null ">
+                #{accountId},
+            </if>
+            <if test="roleId != null ">
+                #{roleId},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO BASE_ACCOUNT2ROLE(ACCOUNT_ID, ROLE_ID)
+        (
+        <foreach collection="list" item="item" separator="union all">
+            select
+            #{item.accountId},
+            #{item.roleId}
+            from dual
+        </foreach>
+        )
+    </insert>
+
+    <delete id="deleteByAccountId" parameterType="java.lang.Long">
+        DELETE FROM BASE_ACCOUNT2ROLE
+        WHERE ACCOUNT_ID = #{accountId}
+    </delete>
+</mapper>

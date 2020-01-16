@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.main.dao.BaseRole2menuMapper">
+    <resultMap id="BaseRole2menuMap" type="com.platform.main.bean.po.BaseRole2menu">
+        <result column="ROLE_ID" jdbcType="OTHER" property="roleId"/>
+        <result column="MENU_ID" jdbcType="OTHER" property="menuId"/>
+    </resultMap>
+
+    <sql id="Single_Base_Column_List">
+ROLE_ID,MENU_ID
+    </sql>
+
+    <select id="selectByBean" parameterType="com.platform.main.bean.po.BaseRole2menu"
+            resultMap="BaseRole2menuMap">
+        SELECT
+        <include refid="Single_Base_Column_List"/>
+        FROM BASE_ROLE2MENU
+        WHERE 1=1
+        <if test="roleId != null and roleId != ''">
+            AND ROLE_ID = #{roleId}
+        </if>
+        <if test="menuId != null and menuId != ''">
+            AND MENU_ID = #{menuId}
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="com.platform.main.bean.po.BaseRole2menu">
+        INSERT INTO BASE_ROLE2MENU
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">
+                ROLE_ID,
+            </if>
+            <if test="menuId != null">
+                MENU_ID,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleId != null ">
+                #{roleId},
+            </if>
+            <if test="menuId != null ">
+                #{menuId},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO BASE_ROLE2MENU(ROLE_ID, MENU_ID)
+        (
+        <foreach collection="list" item="item" separator="union all">
+            select
+            #{item.roleId},
+            #{item.menuId}
+            from dual
+        </foreach>
+        )
+    </insert>
+
+    <delete id="deleteByRoleId" parameterType="java.lang.Long">
+        DELETE FROM BASE_ROLE2MENU
+        WHERE ROLE_ID = #{roleId}
+    </delete>
+</mapper>

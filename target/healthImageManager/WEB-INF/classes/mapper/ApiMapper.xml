@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.main.dao.ApiMapper">
+    <resultMap id="BaseResultMap" type="com.platform.main.bean.po.BaseApi">
+        <id column="API_ID" jdbcType="OTHER" property="apiId"/>
+        <result column="API_URL_PATTEN" jdbcType="OTHER" property="apiUrlPatten"/>
+        <result column="API_NAME" jdbcType="OTHER" property="apiName"/>
+    </resultMap>
+    <sql id="Single_Base_Column_List">
+API_ID,API_URL_PATTEN,API_NAME
+    </sql>
+    <sql id="Base_Column_List">
+        API_ID, API_URL_PATTEN, API_NAME
+    </sql>
+    <select id="selectApiListByRoleSign" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select ba.API_ID, ba.API_URL_PATTEN, ba.API_NAME
+        from BASE_API ba
+        where API_ID in (select a.API_ID
+            from base_role2api a
+            where a.ROLE_ID = (select r.ROLE_ID from base_role r where r.ROLE_SIGN = #{roleSign}))
+    </select>
+
+    <select id="selectByBean" parameterType="com.platform.main.bean.po.BaseApi" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Single_Base_Column_List"/>
+        FROM BASE_API
+        WHERE 1=1
+        <if test="apiId != null and apiId != ''">
+            AND API_ID = #{apiId}
+        </if>
+        <if test="apiUrlPatten != null and apiUrlPatten != ''">
+            AND API_URL_PATTEN = #{apiUrlPatten}
+        </if>
+        <if test="apiName != null and apiName != ''">
+            AND API_NAME = #{apiName}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Single_Base_Column_List"/>
+        FROM BASE_API
+        WHERE API_ID = #{apiId}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM BASE_API
+        WHERE API_ID = #{apiId}
+    </delete>
+
+    <delete id="batchDeleteByPrimaryKey">
+        DELETE FROM BASE_API
+        WHERE API_ID IN
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="com.platform.main.bean.po.BaseApi">
+        <selectKey keyProperty="apiId" order="BEFORE" resultType="java.lang.Long">
+            SELECT BASE_API$SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO BASE_API
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="apiId != null">
+                API_ID,
+            </if>
+            <if test="apiUrlPatten != null">
+                API_URL_PATTEN,
+            </if>
+            <if test="apiName != null">
+                API_NAME,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="apiId != null ">
+                #{apiId},
+            </if>
+            <if test="apiUrlPatten != null ">
+                #{apiUrlPatten},
+            </if>
+            <if test="apiName != null ">
+                #{apiName},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.platform.main.bean.po.BaseApi">
+        UPDATE BASE_API
+        <set>
+            <if test="apiUrlPatten != null">
+                API_URL_PATTEN = #{apiUrlPatten},
+            </if>
+            <if test="apiName != null">
+                API_NAME = #{apiName},
+            </if>
+        </set>
+        WHERE API_ID = #{apiId}
+    </update>
+</mapper>
